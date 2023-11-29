@@ -67,35 +67,37 @@
         </div>
         <div class="flex flex-row output-table">
             <table class="text-center" style = "margin-top: 10px;">
-                <tr style>
-                    <td class="border-black border p-1">
-                        <span class="w-18">memory access count:</span>
-                        <span class="w-18" id="memory-access-count"></span>
+                <tr>
+                    <td class="p-1">
+                        <span class="w-18">Memory Access Count:</span>
                     </td>
-                    <td class="border-black border p-1">
-                        <span class="w-18">cache hit count:</span>
-                        <span class="w-18" id="cache-hit-count"></span>
+                    <td class="p-1">
+                        <span class="w-18">Cache Hit Count:</span>
                     </td>
-                    <td class="border-black border p-1">
-                        <span class="w-18">cache miss count:</span>
-                        <span class="w-18" id="cache-miss-count"></span>
+                    <td class="p-1">
+                        <span class="w-18">Cache Miss Count:</span>
                     </td>
-                    <td class="border-black border p-1">
-                        <span class="w-18">cache hit rate:</span>
-                        <span class="w-18" id="cache-hit-rate"></span>
+                    <td class="p-1">
+                        <span class="w-18">Cache Hit Rate:</span>
                     </td>
-                    <td class="border-black border p-1">
-                        <span class="w-18">cache miss rate:</span>
-                        <span class="w-18" id="cache-miss-rate"></span>
+                    <td class="p-1">
+                        <span class="w-18">Cache Miss Rate:</span>
                     </td>
-                    <td class="border-black border p-1">
-                        <span class="w-18">average memory access time:</span>
-                        <span class="w-18" id="average-memory-access-time"></span>
+                    <td class="p-1">
+                        <span class="w-18">Average Memory Access Time:</span>
                     </td>
-                    <td class="border-black border p-1">
-                        <span class="w-18">total memory access time:</span>
-                        <span class="w-18" id="total-memory-access-time"></span>
+                    <td class="p-1">
+                        <span class="w-18">Total Memory Access Time:</span>
                     </td>
+                </tr>
+                <tr>
+                    <td class="w-18 border-black border p-1 shrink-0" id="memory-access-count"></td>
+                    <td class="w-18 border-black border p-1 shrink-0" id="cache-hit-count"></td>
+                    <td class="w-18 border-black border p-1 shrink-0" id="cache-miss-count"></td>
+                    <td class="w-18 border-black border p-1 shrink-0" id="cache-hit-rate"></td>
+                    <td class="w-18 border-black border p-1 shrink-0" id="cache-miss-rate"></td>
+                    <td class="w-18 border-black border p-1 shrink-0" id="average-memory-access-time"></td>
+                    <td class="w-18 border-black border p-1 shrink-0" id="total-memory-access-time"></td>
                 </tr>
             </table>
         </div>
@@ -104,7 +106,7 @@
                 <tbody id="seq-table">
                 </tbody>
             </table>
-            <table class="border-collapse border-spacing-0 grow-0">
+            <table class="border-collapse border-spacing-0 grow-0 ml-8">
                 <tbody id="snapshot">
                 </tbody>
             </table>

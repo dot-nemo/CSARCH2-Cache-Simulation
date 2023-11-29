@@ -60,6 +60,7 @@ function step(skip = true) {
             step_ctr++
         })
     }
+    updateOutputs()
 }
 
 function initialize() {
@@ -90,9 +91,9 @@ function parseCSV(csv) {
 function createSequenceUI() {
     const read_seq = document.getElementById('seq-table')
     let html = ''
-    html += `<tr>\n<td>Access</td>\n<td>Hit</td>\n<td>Miss</td></tr>`
+    html += `<tr>\n<td class='px-2'>Access</td>\n<td class='px-2'>Hit</td>\n<td class='px-2'>Miss</td></tr>`
     for (let i = 0; i < mem_seq.length; i++) {
-        html += `<tr>\n<td>${mem_seq[i]}</td>\n<td id='${i}-hit'></td>\n<td id='${i}-miss'></td></tr>`
+        html += `<tr>\n<td class='border-black border px-2'>${mem_seq[i]}</td>\n<td id='${i}-hit'class='border-black border px-2'></td>\n<td id='${i}-miss'class='border-black border px-2'></td></tr>`
     }
     read_seq.innerHTML += html
 }
@@ -123,6 +124,15 @@ function generateTestCases(key = 'a') {
             break;
     }
     return seq.slice(0, -2)
+}
+
+function updateOutputs() {
+    const total = hit_count + miss_count
+    document.getElementById('memory-access-count').innerHTML = total
+    document.getElementById('cache-hit-count').innerHTML = hit_count
+    document.getElementById('cache-miss-count').innerHTML = miss_count
+    document.getElementById('cache-hit-rate').innerHTML = (hit_count / total * 100).toFixed(2) + '%'
+    document.getElementById('cache-miss-rate').innerHTML = (miss_count / total * 100).toFixed(2) + '%'
 }
 
 class Cache {
