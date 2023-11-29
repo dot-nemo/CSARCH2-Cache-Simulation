@@ -74,9 +74,11 @@ function step(skip = true) {
     error_container.innerHTML = ''
     if (Math.max(...mem_seq) < mem_blocks) {
         if (!skip) {
+            // go thru mem seq 1 by 1
             cache.find(mem_seq[step_ctr])
             step_ctr++
         } else {
+            // go thru each in mem seq
             mem_seq.forEach(addr => {
                 cache.find(addr)
                 step_ctr++
@@ -176,7 +178,6 @@ function computeAverageTime() {
 }
 
 function computeTotalTime() {
-    const total = hit_count + miss_count
     return hit_count * block_size * cache_acc_time + miss_count * (cache_acc_time + block_size * mem_acc_time)
 }
 
@@ -198,6 +199,7 @@ class Cache {
     }
 }
 
+// Heavy lifting here
 class Set {
 
     constructor(set_no, size) {
@@ -211,13 +213,18 @@ class Set {
 
     map(address) {
         let are_you_there = false
+
+        // Are you there?
         this.blocks.forEach(block => {
             if (block == address) {
                 are_you_there = true
                 return
             }
         })
+
+
         if (!are_you_there) {
+            // Cache not yet full
             if (this.blocks.length < this.size) {
                 this.blocks.push(address)
                 this.outputs[this.blocks.length - 1].innerHTML = address
@@ -230,6 +237,7 @@ class Set {
                     this.t[this.blocks.length - 2].style.background = null
                 }
 
+            // Cache full
             } else {
                 this.blocks[this.next_dequeue % this.size] = address
                 this.outputs[this.next_dequeue % this.size].innerHTML = address
