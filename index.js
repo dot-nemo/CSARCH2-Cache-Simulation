@@ -3,13 +3,17 @@
 let cache = null
 let isInitialized = false
 
-let cache_blocks = 0
+let cache_blocks = 16
 let mem_blocks = 0
+let block_size = 32
 
 let mem_seq = null
 let step_ctr = 0
 let hit_count = 0
 let miss_count = 0
+
+const cache_acc_time = 1
+const mem_acc_time = 10
 
 document.addEventListener('DOMContentLoaded', e => {
     const runBtn = document.getElementById('full-run')
@@ -36,17 +40,28 @@ document.addEventListener('DOMContentLoaded', e => {
         step_ctr = 0
     })
 
+    const textarea = document.getElementById('mem-seq');
+
+    textarea.addEventListener('input', function () {
+      this.style.height = 'auto';
+      this.style.height = (this.scrollHeight > this.clientHeight ? this.scrollHeight : this.clientHeight) + 'px';
+    });
+
     document.getElementById('test-a').addEventListener('click', e => {
-        initialize()
         document.getElementById('mem-seq').value = generateTestCases('a')
+        initialize()
+        textarea.dispatchEvent(new Event('input'))
     })
     document.getElementById('test-b').addEventListener('click', e => {
-        initialize()
+        mem_blocks = parseInt(document.getElementById('mm-size').value)
         document.getElementById('mem-seq').value = generateTestCases('b')
+        initialize()
+        textarea.dispatchEvent(new Event('input'))
     })
     document.getElementById('test-c').addEventListener('click', e => {
-        initialize()
         document.getElementById('mem-seq').value = generateTestCases('c')
+        initialize()
+        textarea.dispatchEvent(new Event('input'))
     })
 })
 
@@ -64,16 +79,16 @@ function step(skip = true) {
 }
 
 function initialize() {
-    const block_size = parseInt(document.getElementById('block-size').value)
-    const set_size = parseInt(document.getElementById('set-size').value)
-    mem_blocks = parseInt(document.getElementById('mm-size').value)
-    cache_blocks = parseInt(document.getElementById('cm-size').value)
-    mem_seq = parseCSV(document.getElementById('mem-seq').value)
-    document.getElementById('snapshot').innerHTML = '<tr><td>Set</td><td>Block</td><td>Stored</td><td>Time</td></tr>'
-    document.getElementById('seq-table').innerHTML = ''
     step_ctr = 0
     hit_count = 0
     miss_count = 0
+    mem_seq = parseCSV(document.getElementById('mem-seq').value)
+    block_size = parseInt(document.getElementById('block-size').value)
+    const set_size = parseInt(document.getElementById('set-size').value)
+    mem_blocks = parseInt(document.getElementById('mm-size').value)
+    cache_blocks = parseInt(document.getElementById('cm-size').value)
+    document.getElementById('snapshot').innerHTML = '<tr><td class=\'px-2\'>Set</td><td class=\'px-2\'>Block</td><td class=\'px-2\'>Stored</td><td class=\'px-2\'>Time</td></tr>'
+    document.getElementById('seq-table').innerHTML = ''
 
     cache = new Cache(cache_blocks, set_size)
 
@@ -107,8 +122,12 @@ function generateTestCases(key = 'a') {
                     seq += j.toString() + ', '
             break;
         case 'b':
-            for (let i = 0; i < 4 * cache_blocks; i++) {
-                seq += Math.floor(Math.random() * mem_blocks) + ', '
+            if (mem_blocks === 0 || isNaN(mem_blocks)) {
+                seq = 'Please set main memory size to generate test case b'
+            } else {
+                for (let i = 0; i < 4 * cache_blocks; i++) {
+                    seq += Math.floor(Math.random() * mem_blocks) + ', '
+                }
             }
             break;
         case 'c':
@@ -133,6 +152,18 @@ function updateOutputs() {
     document.getElementById('cache-miss-count').innerHTML = miss_count
     document.getElementById('cache-hit-rate').innerHTML = (hit_count / total * 100).toFixed(2) + '%'
     document.getElementById('cache-miss-rate').innerHTML = (miss_count / total * 100).toFixed(2) + '%'
+    document.getElementById('average-memory-access-time').innerHTML = computeAverageTime().toFixed(2) + ' ns'
+    document.getElementById('total-memory-access-time').innerHTML = computeTotalTime().toFixed(2) + ' ns'
+}
+
+function computeAverageTime() {
+    const total = hit_count + miss_count
+    return hit_count / total * cache_acc_time + miss_count / total * (cache_acc_time + block_size * mem_acc_time)
+}
+
+function computeTotalTime() {
+    const total = hit_count + miss_count
+    return hit_count * block_size * cache_acc_time + miss_count * (cache_acc_time + block_size * mem_acc_time)
 }
 
 class Cache {
@@ -186,14 +217,14 @@ class Set {
                 }
 
             } else {
-                this.blocks[this.next_dequeue % 4] = address
-                this.outputs[this.next_dequeue % 4].innerHTML = address
-                this.t[this.next_dequeue % 4].innerHTML = `${this.next_dequeue + 1}`
+                this.blocks[this.next_dequeue % this.size] = address
+                this.outputs[this.next_dequeue % this.size].innerHTML = address
+                this.t[this.next_dequeue % this.size].innerHTML = `${this.next_dequeue + 1}`
 
-                this.outputs[this.next_dequeue % 4].style.background = '#cbf3a4'
-                this.outputs[(this.next_dequeue - 1) % 4].style.background = null
-                this.t[this.next_dequeue % 4].style.background = '#cbf3a4'
-                this.t[(this.next_dequeue - 1) % 4].style.background = null
+                this.outputs[this.next_dequeue % this.size].style.background = '#cbf3a4'
+                this.outputs[(this.next_dequeue - 1) % this.size].style.background = null
+                this.t[this.next_dequeue % this.size].style.background = '#cbf3a4'
+                this.t[(this.next_dequeue - 1) % this.size].style.background = null
             }
             this.next_dequeue++
             document.getElementById(`${step_ctr}-miss`).innerHTML = 'X'
