@@ -14,7 +14,12 @@ If the Set Size >= 2n cache blocks, the 1st loop over the cache blocks will alwa
 
 # Test Case B
 
+Given the random sequence, average memory access time across 3 run seems to be around 300 ns. The total access time also ranges from 18 to 19 thousand ns.
+This is expected as this is a randomly generated sequence where the possibility of a cache hit will be low if memory size is high.
 
+![Test Case B](testB1.png)
+![Test Case B](testB2.png)
+![Test Case B](testB3.png)
 
 # Test Case C
 
