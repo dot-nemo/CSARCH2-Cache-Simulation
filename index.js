@@ -11,13 +11,16 @@ let mem_seq = null
 let step_ctr = 0
 let hit_count = 0
 let miss_count = 0
+let error_container = null
 
 const cache_acc_time = 1
 const mem_acc_time = 10
 
 document.addEventListener('DOMContentLoaded', e => {
+    error_container = document.getElementById('error')
     const runBtn = document.getElementById('full-run')
     runBtn.addEventListener('click', e => {
+        error_container.innerHTML = ''
         initialize()
         step()
         cache = null
@@ -25,7 +28,8 @@ document.addEventListener('DOMContentLoaded', e => {
     })
 
     const stepBtn = document.getElementById('step')
-    stepBtn.addEventListener('click', e => {
+        stepBtn.addEventListener('click', e => {
+        error_container.innerHTML = ''
         if (!isInitialized)
             initialize()
         step(false)
@@ -33,6 +37,7 @@ document.addEventListener('DOMContentLoaded', e => {
 
     const resetBtn = document.getElementById('reset')
     resetBtn.addEventListener('click', e => {
+        error_container.innerHTML = ''
         isInitialized = false
         document.getElementById('snapshot').innerHTML = ''
         document.getElementById('seq-table').innerHTML = ''
@@ -66,14 +71,23 @@ document.addEventListener('DOMContentLoaded', e => {
 })
 
 function step(skip = true) {
-    if (!skip) {
-        cache.find(mem_seq[step_ctr])
-        step_ctr++
-    } else {
-        mem_seq.forEach(addr => {
-            cache.find(addr)
+    error_container.innerHTML = ''
+    if (Math.max(...mem_seq) < mem_blocks) {
+        if (!skip) {
+            cache.find(mem_seq[step_ctr])
             step_ctr++
-        })
+        } else {
+            mem_seq.forEach(addr => {
+                cache.find(addr)
+                step_ctr++
+            })
+        }
+    } else {
+        if (isNaN(mem_blocks)) {
+            error_container.innerHTML = 'Please input Main Memory Size'
+        } else {
+            error_container.innerHTML = 'Main Memory Size too small'
+        }
     }
     updateOutputs()
 }
@@ -123,7 +137,7 @@ function generateTestCases(key = 'a') {
             break;
         case 'b':
             if (mem_blocks === 0 || isNaN(mem_blocks)) {
-                seq = 'Please set main memory size to generate test case b'
+                error_container.innerHTML = 'Please set Main Memory Size before using Test Case B'
             } else {
                 for (let i = 0; i < 4 * cache_blocks; i++) {
                     seq += Math.floor(Math.random() * mem_blocks) + ', '
