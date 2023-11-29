@@ -1,7 +1,11 @@
 # CSARCH2-Cache-Simulation
 [Test Case A](#test-case-a)
+
 [Test Case B](#test-case-b)
+
 [Test Case C](#test-case-c)
+
+
 # Test Case A
 For our cache type, the test case has a 100% cache miss
 
